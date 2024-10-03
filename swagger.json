@@ -1,0 +1,248 @@
+swagger: '2.0'
+info:
+  version: 1.7.0
+  title: Sherlock Api
+paths:
+  /api/v1/Validator:
+    post:
+      tags:
+        - Validator
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application//*+json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+        - application/xml
+        - text/xml
+      parameters:
+        - name: sherlockRequest
+          in: body
+          required: false
+          schema:
+            $ref: '#/definitions/SherlockRequest'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SherlockResponse'
+  /api/v1/Validator/Query:
+    post:
+      tags:
+        - Validator
+      consumes:
+        - application/json-patch+json
+        - application/json
+        - text/json
+        - application//*+json
+        - application/xml
+        - text/xml
+        - application//*+xml
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+        - application/xml
+        - text/xml
+      parameters:
+        - name: sherlockRequest
+          in: body
+          required: false
+          schema:
+            $ref: '#/definitions/SherlockValidatorQueryRequest'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SherlockQueryResponse'
+definitions:
+  SherlockRequest:
+    type: object
+    properties:
+      mobile:
+        type: string
+      parameters:
+        type: object
+        additionalProperties:
+          type: string
+      metadata:
+        type: object
+        additionalProperties:
+          type: string
+      queryOperatorAsSource:
+        type: boolean
+  SherlockResponse:
+    type: object
+    properties:
+      requestId:
+        type: string
+      operator:
+        type: string
+      resume:
+        $ref: '#/definitions/Resume'
+      securityDetail:
+        $ref: '#/definitions/SecurityDetail'
+      actions:
+        uniqueItems: false
+        type: array
+        items:
+          $ref: '#/definitions/ActionResults'
+  Resume:
+    type: object
+    properties:
+      advice:
+        type: string
+      causes:
+        $ref: '#/definitions/Causes'
+  SecurityDetail:
+    type: object
+    properties:
+      simcard:
+        $ref: '#/definitions/Simcard'
+      machineLearning:
+        $ref: '#/definitions/MachineLearning'
+      activeAge:
+        $ref: '#/definitions/ActiveAge'
+  ActionResults:
+    type: object
+    properties:
+      type:
+        type: string
+      status:
+        type: string
+      detail:
+        type: string
+      errorMessage:
+        type: string
+  Causes:
+    type: object
+    properties:
+      simcardChange:
+        type: boolean
+      commonBehavior:
+        type: string
+  Simcard:
+    type: object
+    properties:
+      changeInRange:
+        type: boolean
+      rangeToEvaluate:
+        type: string
+      lastChangeDate:
+        format: date-time
+        type: string
+      dataSource:
+        type: string
+      dataSourceResult:
+        type: string
+  MachineLearning:
+    type: object
+    properties:
+      commonBehavior:
+        $ref: '#/definitions/CommonBehavior'
+  ActiveAge:
+    type: object
+    properties:
+      firstTime:
+        type: string
+      lifetime:
+        type: string
+      reactivate:
+        type: string
+      state:
+        type: string
+  CommonBehavior:
+    type: object
+    properties:
+      anomaly:
+        format: double
+        type: number
+      distrust:
+        format: double
+        type: number
+      mobileOperator:
+        $ref: '#/definitions/MobileOperator'
+  MobileOperator:
+    type: object
+    properties:
+      changedInLastSevenDays:
+        type: boolean
+      elapsedTime:
+        $ref: '#/definitions/ElapsedTime'
+  ElapsedTime:
+    type: object
+    properties:
+      days:
+        type: string
+      hours:
+        type: string
+  SherlockValidatorQueryRequest:
+    type: object
+    properties:
+      mobile:
+        type: string
+      userName:
+        type: string
+      queryOperatorAsSource:
+        type: boolean
+  SherlockQueryResponse:
+    type: object
+    properties:
+      operator:
+        type: string
+      securityDetail:
+        $ref: '#/definitions/SecurityDetailQuery'
+  SecurityDetailQuery:
+    type: object
+    properties:
+      simcard:
+        $ref: '#/definitions/SimcardQuery'
+      machineLearning:
+        $ref: '#/definitions/MachineLearningQuery'
+      activeAge:
+        $ref: '#/definitions/ActiveAge'
+  SimcardQuery:
+    type: object
+    properties:
+      changeInRange:
+        type: boolean
+      rangeToEvaluate:
+        type: string
+      lastChangeDate:
+        format: date-time
+        type: string
+      dataSource:
+        type: string
+      dataSourceResult:
+        type: string
+  MachineLearningQuery:
+    type: object
+    properties:
+      commonBehavior:
+        $ref: '#/definitions/CommonBehaviorQuery'
+  CommonBehaviorQuery:
+    type: object
+    properties:
+      anomaly:
+        format: double
+        type: number
+      distrust:
+        format: double
+        type: number
+      anomalyLevel:
+        type: string
+      distrustLevel:
+        type: string
+      mobileOperator:
+        $ref: '#/definitions/MobileOperator'
+securityDefinitions:
+  Basic:
+    name: Authorization
+    in: header
+    type: apiKey
+    description: Please enter into field the word 'Basic' following by space and JWT
+security:
+  - Basic: []
